@@ -1,5 +1,7 @@
 export default {
-  GET_COLOR: 'GET_COLOR',
+  SET_ACCENT: 'SET_ACCENT',
+  SET_ANGLE: 'SET_ANGLE',
   SET_COLOR: 'SET_COLOR',
+  SET_SCHEME: 'SET_SCHEME',
 }
 

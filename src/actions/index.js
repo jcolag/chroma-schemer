@@ -5,4 +5,18 @@ export const setColor = color => ({
   color,
 });
 
+export const setScheme = scheme => ({
+  type: actionConsts.SET_SCHEME,
+  scheme,
+});
+
+export const setAccent = accent => ({
+  type: actionConsts.SET_ACCENT,
+  accent,
+});
+
+export const setAngle = angle => ({
+  type: actionConsts.SET_ANGLE,
+  angle,
+});
 
