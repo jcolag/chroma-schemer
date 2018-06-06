@@ -20,3 +20,8 @@ export const setAngle = angle => ({
   angle,
 });
 
+export const setRestrictAngle = restrict => ({
+  type: actionConsts.SET_RESTRICT_ANGLE,
+  restrict,
+});
+

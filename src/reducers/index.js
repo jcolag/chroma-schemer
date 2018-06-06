@@ -8,9 +8,10 @@ const defaultState = {
     b: 0,
     h: 0,
     s: 100,
-    l: 100,
+    l: 50,
     a: 1,
   },
+  restrictAngle: true,
   scheme: 0,
   theta: 30,
 };
@@ -52,6 +53,8 @@ const get = (state = defaultState, action) => {
       c.s *= 100;
       c.l *= 100;
       return { ...state, color: c };
+    case actionConsts.SET_RESTRICT_ANGLE:
+      return { ...state, restrictAngle: action.restrict };
     case actionConsts.SET_SCHEME:
       return { ...state, scheme: Number(action.scheme) };
     default:

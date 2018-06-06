@@ -33,7 +33,18 @@ export class MainWindow extends Component {
   }
   
   updateAngle(angle) {
+    if (this.props.restrictAngle && angle % 15 === 0) {
+      return;
+    }
     this.props.setAngle(angle);
+    if (this.props.restrictAngle) {
+      let th = Math.trunc(angle / 15) * 15;
+      this.props.setAngle(th);
+    }
+  }
+  
+  updateRestrictAngle(restrict) {
+    this.props.setRestrictAngle(restrict);
   }
   
   hsl(name, h, s, l) {
@@ -171,7 +182,12 @@ export class MainWindow extends Component {
               value={this.props.theta}
               onChange={this.updateAngle.bind(this)}
             />
-            <Text>Angles that are multiples of fifteen degrees are recommended.</Text>
+            <Checkbox
+              checked={this.props.restrictAngle}
+              onToggle={this.updateRestrictAngle.bind(this)}
+            >
+              Limit angles to multiples of fifteen degrees (Recommended)
+            </Checkbox>
             <Checkbox
               checked={this.props.accent}
               onToggle={this.updateAccent.bind(this)}
@@ -181,7 +197,7 @@ export class MainWindow extends Component {
             <Button
               onClick={this.printColor.bind(this)}
             >
-              Generate Color Scheme
+              Generate Color Scheme As CSS
             </Button>
           </Form>
         </Window>
@@ -195,6 +211,7 @@ function mapStateToProps(state, props) {
     accent: state.accent,
     color: state.color,
     scheme: state.scheme,
+    restrictAngle: state.restrictAngle,
     theta: state.theta,
   };
 }
