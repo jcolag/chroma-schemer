@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   render,
   App,
+  Area,
   Button,
   Checkbox,
   ColorButton,
@@ -47,29 +48,28 @@ export class MainWindow extends Component {
     this.props.setRestrictAngle(restrict);
   }
   
+  hslBare(color) {
+    return `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
+  }
+  
   hsl(name, h, s, l) {
     return `  --${name}: hsl(${h}, ${s}%, ${l}%);\n`;
   }
-  
+
   generateShades(prefix, h, s, l) {
-    let result = this.hsl(prefix, h, s, l);
+    let result = [];
     let step = l > 25 ? 12 : (l / 2 - 1);
-    result += this.hsl(`${prefix}-dark`, h, s, l - step);
-    result += this.hsl(`${prefix}-darker`, h, s, l - step * 2);
+    result.push({ name: `${prefix}-darker`, h, s, l: l - step * 2 });
+    result.push({ name: `${prefix}-dark`, h, s, l: l - step });
+    result.push({ name: prefix, h, s, l });
     step = l < 75 ? 12 : ((100 - l) / 2 - 1);
-    result += this.hsl(`${prefix}-light`, h, s, l + step);
-    result += this.hsl(`${prefix}-lighter`, h, s, l + step * 2);
+    result.push({ name: `${prefix}-light`, h, s, l: l + step });
+    result.push({ name: `${prefix}-lighter`, h, s, l: l + step * 2 });
     return result;
   }
   
-  printColor() {
-    let filename = '';
-    try {
-      filename = Dialog('Save');
-    } catch(e) {
-      // Probably just canceled the dialog
-      return;
-    }
+  generateColors() {
+    const colors = [];
     let h = this.props.color.h;
     let s = this.props.color.s;
     let l = this.props.color.l;
@@ -86,13 +86,9 @@ export class MainWindow extends Component {
         th = 90;
         break;
     }
-    let css = ':main {\n  /* Use with, for example, "var(--base-color)" */\n';
-    css += this.generateShades('base-color', h, s, l);
-    css += this.generateShades(
-      'alt-color',
-      (h + (this.props.scheme === 0 ? 0 : th)) % 360,
-      s,
-      l);
+    Array.prototype.push.apply(colors, this.generateShades('base-color', h, s, l));
+    let altH = (h + (this.props.scheme === 0 ? 0 : th)) % 360;
+    Array.prototype.push.apply(colors, this.generateShades('alt-color', altH, s, l));
     let angle = 0;
     switch (this.props.scheme) {
       case 0:
@@ -107,17 +103,28 @@ export class MainWindow extends Component {
         angle = th + 180;
         break;
     }
-    css += this.generateShades(
-      'third-color',
-      (h + angle + 360) % 360,
-      s,
-      l);
-    var comp = this.props.accent || this.props.scheme === 4;
-    css += this.generateShades(
-      'accent-color',
-      (h + (comp ? 180 : 0)) % 360,
-      s,
-      l);
+    let thirdH = (h + angle + 360) % 360;
+    Array.prototype.push.apply(colors, this.generateShades('third-color', thirdH, s, l));
+    let comp = this.props.accent || this.props.scheme === 4;
+    let accentH = (h + (comp ? 180 : 0)) % 360;
+    Array.prototype.push.apply(colors, this.generateShades('accent-color', accentH, s, l));
+    return colors;
+  }
+  
+  printColor() {
+    let filename = '';
+    try {
+      filename = Dialog('Save');
+    } catch(e) {
+      // Probably just canceled the dialog
+      return;
+    }
+    let colors = this.generateColors();
+    let css = ':main {\n  /* Use with, for example, "var(--base-color)" */\n';
+    for (let i = 0; i < colors.length; i += 1) {
+      let c = colors[i];
+      css += this.hsl(c.name, c.h, c.s, c.l);
+    }
     css += "}";
     try {
       fs.writeFileSync(filename, css);
@@ -127,7 +134,7 @@ export class MainWindow extends Component {
   }
 
   render() {
-    const c = this.props.color;
+    const c = this.generateColors();
     let scheme = '';
     switch (this.props.scheme) {
       case 0:
@@ -149,12 +156,13 @@ export class MainWindow extends Component {
         scheme = 'Some unknown color scheme - how did you get here?';
         break;
     }
+    let base = this.props.color;
     return (
       <App>
         <Window title="Color Schemer" size={{w: 750, h: 450}} menuBar={false}>
           <Form row={0} column={0}>
             <ColorButton
-              color={`rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`}
+              color={`rgba(${base.r}, ${base.g}, ${base.b}, ${base.a})`}
               label=" Base Color: "
               onChange={this.updateColor.bind(this)}
             />
@@ -194,6 +202,150 @@ export class MainWindow extends Component {
             >
               Add Accent Color
             </Checkbox>
+            <Area
+              label=" Sample: "
+            >
+              <Area.Rectangle
+                x="0%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[0])}
+              />
+              <Area.Rectangle
+                x="10%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[1])}
+              />
+              <Area.Rectangle
+                x="20%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[2])}
+              />
+              <Area.Rectangle
+                x="30%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[3])}
+              />
+              <Area.Rectangle
+                x="40%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[4])}
+              />
+              <Area.Rectangle
+                x="50%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[5])}
+              />
+              <Area.Rectangle
+                x="60%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[6])}
+              />
+              <Area.Rectangle
+                x="70%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[7])}
+              />
+              <Area.Rectangle
+                x="80%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[8])}
+              />
+              <Area.Rectangle
+                x="90%"
+                y="0%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[9])}
+              />
+              <Area.Rectangle
+                x="0%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[10])}
+              />
+              <Area.Rectangle
+                x="10%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[11])}
+              />
+              <Area.Rectangle
+                x="20%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[12])}
+              />
+              <Area.Rectangle
+                x="30%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[13])}
+              />
+              <Area.Rectangle
+                x="40%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[14])}
+              />
+              <Area.Rectangle
+                x="50%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[15])}
+              />
+              <Area.Rectangle
+                x="60%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[16])}
+              />
+              <Area.Rectangle
+                x="70%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[17])}
+              />
+              <Area.Rectangle
+                x="80%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[18])}
+              />
+              <Area.Rectangle
+                x="90%"
+                y="50%"
+                width="10%"
+                height="50%"
+                fill={this.hslBare(c[19])}
+              />
+            </Area>
             <Button
               onClick={this.printColor.bind(this)}
             >
