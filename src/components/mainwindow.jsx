@@ -120,7 +120,7 @@ export class MainWindow extends Component {
       return;
     }
     let colors = this.generateColors();
-    let css = ':main {\n  /* Use with, for example, "var(--base-color)" */\n';
+    let css = 'html {\n  /* Use with, for example, "var(--base-color)" */\n';
     for (let i = 0; i < colors.length; i += 1) {
       let c = colors[i];
       css += this.hsl(c.name, c.h, c.s, c.l);
@@ -141,7 +141,7 @@ export class MainWindow extends Component {
         scheme = 'Colors will all have the same hue.';
         break;
       case 1:
-        scheme = 'Colors are in groups that are equidistant from each other on the color wheel.';
+        scheme = 'Colors are clustered and spaced equally from each other on the color wheel.';
         break;
       case 2:
         scheme = 'Three colors equally spaced around the color wheel.';
@@ -170,6 +170,7 @@ export class MainWindow extends Component {
               label=" Scheme Type: "
               onSelect={this.updateScheme.bind(this)}
               selected={this.props.scheme}
+              stretchy={false}
             >
               <Picker.Item>Monochromatic (Single Color)</Picker.Item>
               <Picker.Item>Analogous (Three Colors)</Picker.Item>
@@ -177,7 +178,7 @@ export class MainWindow extends Component {
               <Picker.Item>Tetradic (Rectangle, Four Colors)</Picker.Item>
               <Picker.Item>Tetradic (Square, Four Colors)</Picker.Item>
             </Picker>
-            <Text>{scheme}</Text>
+            <Text stretchy={false}>{scheme}</Text>
             <Slider
               enabled={
                 this.props.scheme !== 0 &&
@@ -189,16 +190,19 @@ export class MainWindow extends Component {
               min={0}
               value={this.props.theta}
               onChange={this.updateAngle.bind(this)}
+              stretchy={false}
             />
             <Checkbox
               checked={this.props.restrictAngle}
               onToggle={this.updateRestrictAngle.bind(this)}
+              stretchy={false}
             >
               Limit angles to multiples of fifteen degrees (Recommended)
             </Checkbox>
             <Checkbox
               checked={this.props.accent}
               onToggle={this.updateAccent.bind(this)}
+              stretchy={false}
             >
               Add Accent Color
             </Checkbox>
