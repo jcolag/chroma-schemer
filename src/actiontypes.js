@@ -4,5 +4,4 @@ export default {
   SET_COLOR: 'SET_COLOR',
   SET_RESTRICT_ANGLE: 'SET_RESTRICT_ANGLE',
   SET_SCHEME: 'SET_SCHEME',
-}
-
+};
