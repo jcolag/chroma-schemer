@@ -4,11 +4,11 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import rootReducer from './src/reducers';
-import { MainWindow } from './src/components/mainwindow';
+import WindowMain from './src/components/mainwindow';
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 render(
   <Provider store={store}>
-    <MainWindow />
+    <WindowMain />
   </Provider>);
