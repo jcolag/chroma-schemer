@@ -1,3 +1,4 @@
+// @flow
 export default {
   SET_ACCENT: 'SET_ACCENT',
   SET_ANGLE: 'SET_ANGLE',

@@ -1,3 +1,4 @@
+// @flow
 import { render } from 'proton-native';
 import React from 'react';
 import { createStore, applyMiddleware } from 'redux';

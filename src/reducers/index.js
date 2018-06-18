@@ -1,3 +1,4 @@
+// @flow
 import actionConsts from '../actiontypes';
 
 const defaultState = {
