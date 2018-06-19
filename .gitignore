@@ -59,3 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+# gedit backups
+*~
+
+# output CSS files
+*.css
+
